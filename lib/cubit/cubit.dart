@@ -19,7 +19,10 @@ class AppCubit extends Cubit<AppStates>{
       onCreate: (database, version) {
         print('database created');
         database.execute(
-            'CREATE TABLE User (id INTEGER PRIMARY KEY, name TEXT,phone TEXT,email TEXT, balance TEXT,transactions TEXT)');
+            'CREATE TABLE User (id INTEGER PRIMARY KEY, name TEXT,phone TEXT,email TEXT, balance INTEGER,transactions TEXT)');
+        print('table created');
+        database.execute(
+            'CREATE TABLE Trans (id INTEGER PRIMARY KEY, fromName TEXT,toName TEXT, balance INTEGER)');
         print('table created');
         database.transaction((txn) async {
           await txn
@@ -85,18 +88,16 @@ class AppCubit extends Cubit<AppStates>{
         });
       },
       onOpen: (database) {
-        getDataFromDataBase(database).then((value) {
-          data = value;
-          print(data);
+        getDataFromDataBase(database);
+        getDataFromHistoryDataBase(database);
+       // emit(AppGetDatabaseState());
 
-          //emit(AppGetDatabaseState());
-        });
         print('database opened');
       },
     ).then((value) {
       database = value;
 
-      // emit(AppCreateDatabaseState());
+       emit(AppCreateDatabaseState());
     });
   }
 
@@ -109,11 +110,7 @@ class AppCubit extends Cubit<AppStates>{
         print("$value inserted successfully");
         emit(AppInsertDatabaseState());
 
-        getDataFromDataBase(database).then((value) {
-          data = value;
-          print(data);
-         emit(AppGetDatabaseState());
-        });
+        getDataFromDataBase(database);
       }).catchError((error) {
         print("error when inserting  Record ${error.toString()}");
       });
@@ -121,11 +118,74 @@ class AppCubit extends Cubit<AppStates>{
     });
   }
 
-  Future<List<Map>> getDataFromDataBase(database) async {
+ void getDataFromDataBase(database) async {
+    data = [];
    emit(AppGetDatabaseLoadingState());
-    return await database.rawQuery('SELECT * FROM User');
+     database.rawQuery('SELECT * FROM User').then((value) {
+       data = value;
+       print(data);
+     value.forEach((element){
+       print(element['balance']);
+     });
+       emit(AppGetDatabaseState());
+
+
+     });
     print(data);
   }
+
+  void updateData (
+  {
+  required int amount,
+  required int id,
+}) async{
+     database.rawUpdate('UPDATE User SET balance = ? WHERE id = ?',
+    [amount,id],
+    ).then((value) {
+      getDataFromDataBase(database);
+      emit(AppUpdateDatabaseState());
+
+     });
+  }
+
+  insertToHistoryDatabase({
+    required String fromName,
+    required String toName,
+    required int balance,
+}) async {
+    await database.transaction((txn) async {
+      await txn
+          .rawInsert(
+          'INSERT INTO Trans(fromName,toName ,balance ) VALUES("$fromName","$toName","$balance")')
+          .then((value) {
+        print("$value inserted successfully history");
+        emit(AppInsertDatabaseState());
+
+        getDataFromHistoryDataBase(database);
+      }).catchError((error) {
+        print("error when inserting  Record ${error.toString()}");
+      });
+      return null;
+    });
+  }
+
+  void getDataFromHistoryDataBase(database) async {
+    newData = [];
+    emit(AppGetDatabaseLoadingState());
+    database.rawQuery('SELECT * FROM Trans').then((value) {
+      newData = value;
+      print(newData);
+      value.forEach((element){
+        print(element['balance']);
+      });
+      emit(AppGetDatabaseState());
+
+
+    });
+    print(newData);
+  }
+
+
 }
 
 

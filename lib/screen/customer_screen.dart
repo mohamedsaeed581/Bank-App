@@ -7,9 +7,10 @@ import 'package:transaction_money/screen/transfer_screen.dart';
 class CustomerScreen extends StatelessWidget {
   final String  name;
   final String phone ;
-  final String balance;
+  final int balance;
   final String email;
-  const CustomerScreen({Key? key, required this.name, required this.phone, required this.balance, required this.email}) : super(key: key);
+  final int id;
+  const CustomerScreen({Key? key, required this.name, required this.phone, required this.balance, required this.email, required this.id}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -71,7 +72,14 @@ class CustomerScreen extends StatelessWidget {
               padding: const EdgeInsets.all(15.0),
               child: Container(
                 alignment: Alignment.centerLeft,
-                child: Center(child: Text('Email:  ${email}')),
+                child: Center(child:
+                Text('Email:  ${email}',
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 20,
+                    fontWeight: FontWeight.w500,
+                  ),
+                )),
                 width: MediaQuery.of(context).size.width,
                 height: MediaQuery.of(context).size.height * 0.1,
                 decoration: BoxDecoration(
@@ -84,7 +92,13 @@ class CustomerScreen extends StatelessWidget {
               padding: const EdgeInsets.all(15.0),
               child: Container(
                 alignment: Alignment.centerLeft,
-                child: Center(child: Text('Phone:  ${phone}')),
+                child: Center(child: Text('Phone:  ${phone}',
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 20,
+                    fontWeight: FontWeight.w500,
+                  ),
+                )),
                 width: MediaQuery.of(context).size.width,
                 height: MediaQuery.of(context).size.height * 0.1,
                 decoration: BoxDecoration(
@@ -106,7 +120,7 @@ class CustomerScreen extends StatelessWidget {
             // ),
             ElevatedButton(
               onPressed: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context) => TransferScreen(amount: balance,)));
+                Navigator.push(context, MaterialPageRoute(builder: (context) => TransferScreen(amount: balance,id: id,name: name,)));
               },
               child: Text('Transfer Money',
                 style: TextStyle(color: Colors.black),
