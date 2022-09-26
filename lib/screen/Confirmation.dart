@@ -7,14 +7,13 @@ class ConfirmScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       body: Column(
         children: [
           Spacer(flex: 2,),
 
           Center(
-            child: Text('Confirmation',
-            style: TextStyle(fontSize: 60),
-            ),
+            child: Image(image: AssetImage('assets/images/confirm.png'),)
           ),
           Spacer(flex: 2,),
           ElevatedButton(

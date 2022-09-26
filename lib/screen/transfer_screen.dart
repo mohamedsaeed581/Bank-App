@@ -30,45 +30,44 @@ class _TransferScreenState extends State<TransferScreen> {
   var amountController = TextEditingController();
 
 var formKey = GlobalKey<FormState>();
-
 ///'Mohamed saeed','Ahmed Salem','Mohamed Sadek','Mohamed Shabaan','Yhaya Saeed','Saeed','Wael','Krar'
   List items = [ {
     'id': '1',
     'name': 'Mohamed saeed',
-    'balance': '80000',
+    'balance': '${data[0]['balance']}',
   },
     {
       'id': '2',
       'name': 'Ahmed Salem',
-      'balance': '50000',
+      'balance': '${data[1]['balance']}',
     },
     {
       'id': '3',
       'name': 'Mohamed Sadek',
-      'balance': '20000',
+      'balance': '${data[2]['balance']}',
     },
     {
       'id': '4',
       'name': 'Mohamed Shabaan',
-      'balance': '30000',
+      'balance': '${data[3]['balance']}',
     },
     {
       'id': '6',
       'name': 'Yhaya Saeed',
-      'balance': '10000',
+      'balance': '${data[4]['balance']}',
     },
     {
       'id': '7',
       'name': 'Saeed',
-      'balance': '1500',
+      'balance': '${data[5]['balance']}',
     }, {
       'id': '8',
       'name': 'Wael',
-      'balance': '1000',
+      'balance': '${data[6]['balance']}',
     }, {
       'id': '9',
       'name': 'Krar',
-      'balance': '15000',
+      'balance': '${data[7]['balance']}',
     },
   ];
 
@@ -199,13 +198,17 @@ dynamic userId ;
                 ElevatedButton(
                   onPressed: () {
                     int newAmount = amount! - int.parse(amountController.text);
+                    int newAmount2 = int.parse(userId['balance']) + int.parse(amountController.text);
                     print(newAmount + id!);
                     print('dddddd + ${userId['name']}');
+                    print('balanceeee + ${userId['balance']}');
+                    print('balanceeee + $newAmount2');
                     // print('iddddddddddd ${selectItem!.}');
                     if(formKey.currentState!.validate())
                     {
                       Navigator.push(context, MaterialPageRoute(builder: (context) => ConfirmScreen()));
                       AppCubit.get(context).updateData(amount: newAmount, id: id!);
+                      AppCubit.get(context).updateData(amount: newAmount2, id: int.parse(userId['id']));
                       print(int.parse(amountController.text));
                       print('$name');
                      // print('$selectItem');
